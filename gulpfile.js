@@ -6,7 +6,6 @@ const browserSync = require("browser-sync");
 const autoprefixer = require('gulp-autoprefixer');
 const imagemin = require("gulp-imagemin");
 const htmlmin = require("gulp-htmlmin");
-const concat = require("gulp-concat");
 const sourcemaps = require("gulp-sourcemaps");
 
 const paths = {
@@ -17,6 +16,7 @@ const paths = {
   scss: {
     src: 'src/sass/**/*.+(scss|sass|css)',
     dest: 'dist/css',
+    srcCss: 'src/css'
   },
   images: {
     src: 'src/img/**/*',
@@ -52,10 +52,11 @@ gulp.task("styles", function () {
     .pipe(autoprefixer())
     .pipe(sourcemaps.write())
     .pipe(rename("style.css"))
-    .pipe(gulp.dest(paths.scss.dest))
+    .pipe(gulp.dest(paths.scss.srcCss))
     .pipe(cleanCSS({ compatibility: "ie8" }))
     .pipe(rename({ basename: "style", suffix: ".min"}))
     .pipe(gulp.dest(paths.scss.dest))
+    .pipe(gulp.dest(paths.scss.srcCss))
     .pipe(browserSync.stream());
 });
 
