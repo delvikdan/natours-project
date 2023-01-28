@@ -1,8 +1,8 @@
 # Natours Project
 
 Landing page for a hiking tours company.
-Used:
-- BEM;
-- SCSS;
+Technology stack:
+- HTML5, BEM;
+- SASS (SCSS);
 - 7-1 Sass Architecture;
 - NPM (Gulp).
