@@ -33,6 +33,7 @@ const paths = {
   },
 };
 
+// BrowserSync directory and reload on change
 gulp.task('server', function () {
   browserSync({
     server: {
@@ -43,12 +44,14 @@ gulp.task('server', function () {
   gulp.watch(paths.html.src).on('change', browserSync.reload);
 });
 
+// Watch for changes
 gulp.task('watch', function () {
   gulp.watch(paths.scss.src, gulp.parallel('styles'));
   gulp.watch(paths.html.src).on('change', gulp.parallel('html'));
   gulp.watch(paths.js.src).on('change', gulp.parallel('scripts'));
 });
 
+// Compile css, add prefixes, compress and rename it to .min
 gulp.task('styles', function () {
   return gulp
     .src(paths.scss.src)
@@ -65,6 +68,7 @@ gulp.task('styles', function () {
     .pipe(browserSync.stream());
 });
 
+// Compress html
 gulp.task('html', function () {
   return gulp
     .src(paths.html.src)
@@ -72,10 +76,12 @@ gulp.task('html', function () {
     .pipe(gulp.dest(paths.html.dest));
 });
 
+// JavaScript
 gulp.task('scripts', function () {
   return gulp.src(paths.js.src).pipe(gulp.dest(paths.js.dest));
 });
 
+// Optimize images
 gulp.task('images', function () {
   return gulp
     .src(paths.images.src)
@@ -83,6 +89,7 @@ gulp.task('images', function () {
     .pipe(gulp.dest(paths.images.dest));
 });
 
+// Fonts
 gulp.task('fonts', function () {
   return gulp.src(paths.fonts.src).pipe(gulp.dest(paths.fonts.dest));
 });
