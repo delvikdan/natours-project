@@ -6,3 +6,6 @@ Technology stack:
 - SASS (SCSS);
 - 7-1 Sass Architecture;
 - NPM (Gulp).
+
+URL:
+https://natours-hiking.netlify.app/
