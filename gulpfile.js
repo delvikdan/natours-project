@@ -1,4 +1,4 @@
-const gulp = require('gulp');
+const { src, dest, parallel, series, watch } = require('gulp');
 const sass = require('gulp-sass')(require('sass'));
 const cleanCSS = require('gulp-clean-css');
 const rename = require('gulp-rename');
@@ -7,6 +7,7 @@ const autoprefixer = require('gulp-autoprefixer');
 const imagemin = require('gulp-imagemin');
 const htmlmin = require('gulp-htmlmin');
 const sourcemaps = require('gulp-sourcemaps');
+const del = require('gulp-clean');
 
 // Pathes to files
 const paths = {
@@ -33,76 +34,76 @@ const paths = {
   },
 };
 
-// BrowserSync directory and reload on change
-gulp.task('server', function () {
+// Remove Dist before build process
+function clean() {
+  return src('dist/*', { read: false }).pipe(del());
+}
+
+// Static Server + reload on html files change
+function serve() {
   browserSync({
     server: {
       baseDir: paths.html.dest,
     },
   });
-
-  gulp.watch(paths.html.src).on('change', browserSync.reload);
-});
-
-// Watch for changes
-gulp.task('watch', function () {
-  gulp.watch(paths.scss.src, gulp.parallel('styles'));
-  gulp.watch(paths.html.src).on('change', gulp.parallel('html'));
-  gulp.watch(paths.js.src).on('change', gulp.parallel('scripts'));
-});
+}
 
 // Compile css, add prefixes, compress and rename it to .min
-gulp.task('styles', function () {
-  return gulp
-    .src(paths.scss.src)
+function styles() {
+  return src(paths.scss.src)
     .pipe(sourcemaps.init())
     .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
     .pipe(autoprefixer())
     .pipe(sourcemaps.write())
     .pipe(rename('style.css'))
-    .pipe(gulp.dest(paths.scss.srcCss))
+    .pipe(dest(paths.scss.srcCss))
     .pipe(cleanCSS({ compatibility: 'ie8' }))
     .pipe(rename({ basename: 'style', suffix: '.min' }))
-    .pipe(gulp.dest(paths.scss.dest))
-    .pipe(gulp.dest(paths.scss.srcCss))
+    .pipe(dest(paths.scss.dest))
     .pipe(browserSync.stream());
-});
+}
 
-// Compress html
-gulp.task('html', function () {
-  return gulp
-    .src(paths.html.src)
+// Move the javascript files
+function scripts() {
+  return src(paths.js.src).pipe(dest(paths.js.dest));
+}
+
+// Compress and move html
+function html() {
+  return src(paths.html.src)
     .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
-    .pipe(gulp.dest(paths.html.dest));
-});
+    .pipe(dest(paths.html.dest));
+}
 
-// JavaScript
-gulp.task('scripts', function () {
-  return gulp.src(paths.js.src).pipe(gulp.dest(paths.js.dest));
-});
+// Optimize and move images
+async function images() {
+  return src(paths.images.src).pipe(imagemin()).pipe(dest(paths.images.dest));
+}
 
-// Optimize images
-gulp.task('images', function () {
-  return gulp
-    .src(paths.images.src)
-    .pipe(imagemin())
-    .pipe(gulp.dest(paths.images.dest));
-});
+// Move fonts
+async function fonts() {
+  return src(paths.fonts.src).pipe(dest(paths.fonts.dest));
+}
 
-// Fonts
-gulp.task('fonts', function () {
-  return gulp.src(paths.fonts.src).pipe(gulp.dest(paths.fonts.dest));
-});
+// Watch for changes and run tasks on change
+function watch_dev() {
+  watch(paths.scss.src, styles);
+  watch(paths.js.src, scripts).on('change', browserSync.reload);
+  watch(paths.html.src, html).on('change', browserSync.reload);
+}
 
-gulp.task(
-  'default',
-  gulp.parallel(
-    'server',
-    'watch',
-    'styles',
-    'html',
-    'scripts',
-    'images',
-    'fonts'
-  )
+exports.clean = clean;
+exports.serve = serve;
+exports.styles = styles;
+exports.scripts = scripts;
+exports.html = html;
+exports.fonts = fonts;
+exports.images = images;
+
+exports.default = series(
+  clean,
+  parallel(styles, scripts, fonts, images, html),
+  parallel(serve, watch_dev)
 );
+
+exports.build = series(clean, parallel(styles, scripts, fonts, images, html));

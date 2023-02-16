@@ -14,6 +14,7 @@ document
     }
   });
 
+// Smooth scroling on button click
 document.querySelector('.header .btn').addEventListener('click', function (e) {
   e.preventDefault();
   document
