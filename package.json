@@ -8,9 +8,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "autoprefixer": "^10.4.14",
     "browser-sync": "^2.26.5",
     "gulp": "^4.0.2",
-    "gulp-autoprefixer": "^6.1.0",
     "gulp-clean": "^0.4.0",
     "gulp-clean-css": "^4.2.0",
     "gulp-cli": "^2.2.0",
@@ -21,13 +21,21 @@
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^5.0.0",
     "gulp-sourcemaps": "^3.0.0",
+    "postcss": "^8.4.21",
     "sass": "^1.35.1"
   },
   "browserslist": [
-    "last 1 version",
     "> 1%",
-    "maintained node versions",
-    "not dead"
+    "ie >= 8",
+    "edge >= 15",
+    "ie_mob >= 10",
+    "ff >= 45",
+    "chrome >= 45",
+    "safari >= 7",
+    "opera >= 23",
+    "ios >= 7",
+    "android >= 4",
+    "bb >= 10"
   ],
   "description": ""
 }
